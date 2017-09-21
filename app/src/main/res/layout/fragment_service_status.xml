@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -6,53 +6,94 @@
 
     <!-- TODO: Update blank fragment layout -->
 
-    <ImageView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/background"
-        android:scaleType="centerCrop"
-        android:alpha="0.9"
-        />
+        android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:layout_marginTop="48dp"
-        android:textSize="28sp"
-        android:padding="16dp"
-        android:background="@drawable/bck_category"
-        android:textColor="@android:color/white"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/current_status"
-        />
+        <ImageView
+            android:layout_width="380dp"
+            android:layout_height="560dp"
+            android:src="@drawable/background"
+            android:scaleType="centerCrop"
+            android:alpha="0.9"
+            />
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:id="@+id/change_status"
-        android:layout_margin="56dp"
-        android:background="@drawable/bck_nt_accepting"
-        android:textColor="@android:color/white"
-        android:text="Start accepting orders"
-        android:layout_centerVertical="true"
-        />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_marginTop="48dp"
+            android:textSize="28sp"
+            android:padding="16dp"
+            android:background="@drawable/bck_category"
+            android:textColor="@android:color/white"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/current_status"
+            />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:id="@+id/change_status"
+            android:background="@drawable/bck_nt_accepting"
+            android:textColor="@android:color/white"
+            android:text="Start accepting orders"
+            android:layout_marginLeft="56dp"
+            android:layout_marginRight="56dp"
+            android:layout_marginTop="57dp"
+            android:layout_below="@+id/current_status"
+            android:layout_centerHorizontal="true" />
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="56dp"
-        android:clickable="true"
-        android:layout_centerHorizontal="true"
-        android:padding="24dp"
-        android:id="@+id/coupon"
-        android:text="Discount coupon: "
-        android:gravity="center"
-        android:textColor="@android:color/white"
-        android:textSize="16sp"
-        android:background="@drawable/bck_coupon"
-        android:layout_alignParentBottom="true"
-        />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:padding="24dp"
+            android:id="@+id/coupon"
+            android:text="Discount coupon: "
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:background="@drawable/bck_coupon"
+            android:layout_marginLeft="56dp"
+            android:layout_marginRight="56dp"
+            android:layout_marginTop="53dp"
+            android:layout_below="@+id/change_status"
+            android:layout_centerHorizontal="true" />
 
-</RelativeLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:clickable="true"
+            android:layout_centerHorizontal="true"
+            android:padding="24dp"
+            android:id="@+id/min_order"
+            android:text="Minimum order amount:"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:background="@drawable/bck_category"
+            android:layout_below="@+id/coupon"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:clickable="true"
+            android:layout_centerHorizontal="true"
+            android:padding="24dp"
+            android:id="@+id/version"
+            android:text="Latest app version: "
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:background="@drawable/bck_category"
+            android:layout_below="@+id/min_order"
+            />
+
+    </RelativeLayout>
+
+</ScrollView>

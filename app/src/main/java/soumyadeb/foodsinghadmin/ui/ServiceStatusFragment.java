@@ -39,19 +39,21 @@ public class ServiceStatusFragment extends Fragment {
 
     private Button mChangeStatus;
     private TextView mCurrentStatus;
-    private TextView mDiscount;
+    private TextView mDiscount, mMinOrderAmount, mVersion;
 
     ProgressDialog mProgress;
 
     StringRequest stringRequest;
     RequestQueue queue;
 
-    private String status, discount;
+    private String status, discount, minAmount, version;
 
-    final String REQ_URL_GET_STATUS = "http://mindwires.in/foodsingh_app/get_service_status.php";
+    final String REQ_URL_GET_STATUS = "http://mindwires.in/foodsingh_app/get_service_status2.php";
     final String REQ_URL_SET_STATUS = "http://mindwires.in/foodsingh_app/set_service_status.php";
     final String REQ_URL_GET_DISCOUNT = "http://mindwires.in/foodsingh_app/get_discount.php";
     final String REQ_URL_SET_DISCOUNT = "http://mindwires.in/foodsingh_app/set_discount.php";
+    final String REQ_URL_SET_VERSION = "http://mindwires.in/foodsingh_app/set_latest_version.php";
+    final String REQ_URL_SET_MIN_AMOUNT = "http://mindwires.in/foodsingh_app/set_min_amount.php";
 
     public ServiceStatusFragment() {
         // Required empty public constructor
@@ -67,6 +69,8 @@ public class ServiceStatusFragment extends Fragment {
         mChangeStatus = (Button) mView.findViewById(R.id.change_status);
         mCurrentStatus = (TextView)mView.findViewById(R.id.current_status);
         mDiscount = (TextView)mView.findViewById(R.id.coupon);
+        mMinOrderAmount = (TextView) mView.findViewById(R.id.min_order);
+        mVersion = (TextView)mView.findViewById(R.id.version);
 
         mProgress = new ProgressDialog(getContext());
         mProgress.setMessage("Loading data...");
@@ -86,6 +90,18 @@ public class ServiceStatusFragment extends Fragment {
 
                             status = jsonObject.getString("service");
 
+                            discount = jsonObject.getString("discount");
+
+                            mDiscount.setText("Current discount: "+discount+"%");
+
+                            minAmount = jsonObject.getString("min_order");
+
+                            mMinOrderAmount.setText("Min order amount: ₹"+minAmount);
+
+                            version = jsonObject.getString("latest_version");
+
+                            mVersion.setText("Latest app version: v"+version);
+
                             updateButton();
 
 
@@ -104,7 +120,7 @@ public class ServiceStatusFragment extends Fragment {
         });
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
-
+/*
         
         //Fetch discount data:
         stringRequest = new StringRequest(Request.Method.POST, REQ_URL_GET_DISCOUNT,
@@ -136,6 +152,7 @@ public class ServiceStatusFragment extends Fragment {
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
 
+*/
 
         mChangeStatus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -266,6 +283,158 @@ public class ServiceStatusFragment extends Fragment {
 
             }
         });
+
+
+        mMinOrderAmount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                View alertLayout = inflater.inflate(R.layout.alert_set_min_amount, null);
+                final EditText etMinAmount = (EditText) alertLayout.findViewById(R.id.min_amount);
+                AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                alert.setTitle("Set minimum order amount");
+                // this is set the view from XML inside AlertDialog
+                alert.setView(alertLayout);
+                // disallow cancel of AlertDialog on click of back button and outside touch
+                alert.setCancelable(false);
+                alert.setPositiveButton("DONE", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mProgress.setMessage("Updating minimum order amount...");
+                        mProgress.show();
+
+                        final String newMinAmount = etMinAmount.getText().toString();
+                        //Toast.makeText(getContext(), category, Toast.LENGTH_LONG).show();
+                        stringRequest = new StringRequest(Request.Method.POST, REQ_URL_SET_MIN_AMOUNT,
+                                new Response.Listener<String>() {
+                                    @Override
+                                    public void onResponse(String response) {
+                                        try {
+
+                                            JSONObject jsonObject = new JSONObject(response);
+                                            String result = jsonObject.getString("result");
+                                            mProgress.dismiss();
+                                            if(result.equals("true")) {
+                                                minAmount = newMinAmount;
+                                                Toast.makeText(getContext(), "Minimum amount updated successfully", Toast.LENGTH_LONG).show();
+                                                mMinOrderAmount.setText("Min order amount: ₹"+minAmount);
+                                            }
+                                            else
+                                                Toast.makeText(getContext(), "Error occurred, please try again\n"+jsonObject.getString("message").toString(), Toast.LENGTH_LONG).show();
+
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.d("DATA",error.toString());
+                                Toast.makeText(getContext(), "Error occurred. Please try again.", Toast.LENGTH_LONG).show();
+                                mProgress.dismiss();
+                            }
+                        }){
+                            @Override
+                            protected Map getParams(){
+                                Map<String, String> map = new HashMap<>();
+                                map.put("min_amount", newMinAmount);
+
+                                return map;
+                            }
+                        };
+                        // Add the request to the RequestQueue.
+                        queue.add(stringRequest);
+                    }
+                });
+                alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //Do nothing
+                    }
+                });
+
+                AlertDialog dialog = alert.create();
+                dialog.show();
+
+            }
+        });
+
+        mVersion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                View alertLayout = inflater.inflate(R.layout.alert_set_version, null);
+                final EditText etVersion = (EditText) alertLayout.findViewById(R.id.version);
+                AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                alert.setTitle("Set latest app version");
+                // this is set the view from XML inside AlertDialog
+                alert.setView(alertLayout);
+                // disallow cancel of AlertDialog on click of back button and outside touch
+                alert.setCancelable(false);
+                alert.setPositiveButton("DONE", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mProgress.setMessage("Updating latest app version...");
+                        mProgress.show();
+
+                        final String newVersion = etVersion.getText().toString();
+                        //Toast.makeText(getContext(), category, Toast.LENGTH_LONG).show();
+                        stringRequest = new StringRequest(Request.Method.POST, REQ_URL_SET_VERSION,
+                                new Response.Listener<String>() {
+                                    @Override
+                                    public void onResponse(String response) {
+                                        try {
+
+                                            JSONObject jsonObject = new JSONObject(response);
+                                            String result = jsonObject.getString("result");
+                                            mProgress.dismiss();
+                                            if(result.equals("true")) {
+                                                version = newVersion;
+                                                Toast.makeText(getContext(), "Latest app version updated successfully", Toast.LENGTH_LONG).show();
+                                                mVersion.setText("Latest app version: v"+version);
+                                            }
+                                            else
+                                                Toast.makeText(getContext(), "Error occurred, please try again\n"+jsonObject.getString("message").toString(), Toast.LENGTH_LONG).show();
+
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.d("DATA",error.toString());
+                                Toast.makeText(getContext(), "Error occurred. Please try again.", Toast.LENGTH_LONG).show();
+                                mProgress.dismiss();
+                            }
+                        }){
+                            @Override
+                            protected Map getParams(){
+                                Map<String, String> map = new HashMap<>();
+                                map.put("version", newVersion);
+
+                                return map;
+                            }
+                        };
+                        // Add the request to the RequestQueue.
+                        queue.add(stringRequest);
+                    }
+                });
+                alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //Do nothing
+                    }
+                });
+
+                AlertDialog dialog = alert.create();
+                dialog.show();
+
+            }
+        });
+
+
+
 
         return mView;
     }
